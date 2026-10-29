@@ -563,36 +563,36 @@ function OverviewPage({ summary, latest, aqiInfo, pollutant, setPollutant, trend
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-            <div className="dataset-badge-card" style={{ background: "rgba(14, 23, 38, 0.7)" }}>
+            <div className="dataset-badge-card">
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
                 <div className="kpi-icon-wrap" style={{ color: "var(--accent-cyan)" }}>
                   <Icon name="layers" size={16} />
                 </div>
-                <strong style={{ color: "#fff", fontSize: "13px" }}>1. Boundary Layer Inversion</strong>
+                <strong style={{ color: "var(--text-primary)", fontSize: "13px" }}>1. Boundary Layer Inversion</strong>
               </div>
               <p style={{ fontSize: "11px", color: "var(--text-secondary)", lineHeight: 1.55 }}>
                 In winter, ambient temperature (AT) plummets, creating a cold ground layer trapped beneath warm air. The boundary mixing layer collapses from 2,000m in summer down to &lt;200m in December, sealing in pollutants like a closed lid.
               </p>
             </div>
 
-            <div className="dataset-badge-card" style={{ background: "rgba(14, 23, 38, 0.7)" }}>
+            <div className="dataset-badge-card">
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
                 <div className="kpi-icon-wrap" style={{ color: "var(--accent-amber)" }}>
                   <Icon name="wind" size={16} />
                 </div>
-                <strong style={{ color: "#fff", fontSize: "13px" }}>2. Calm Stagnant Wind Speed (&lt; 1 m/s)</strong>
+                <strong style={{ color: "var(--text-primary)", fontSize: "13px" }}>2. Calm Stagnant Wind Speed (&lt; 1 m/s)</strong>
               </div>
               <p style={{ fontSize: "11px", color: "var(--text-secondary)", lineHeight: 1.55 }}>
                 Wind speed across the Indo-Gangetic basin drops to near zero in November. With no horizontal ventilation or dispersion, vehicular exhaust, biomass burning, and road dust accumulate continuously.
               </p>
             </div>
 
-            <div className="dataset-badge-card" style={{ background: "rgba(14, 23, 38, 0.7)" }}>
+            <div className="dataset-badge-card">
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
                 <div className="kpi-icon-wrap" style={{ color: "var(--aqi-very-poor)" }}>
                   <Icon name="droplets" size={16} />
                 </div>
-                <strong style={{ color: "#fff", fontSize: "13px" }}>3. High Relative Humidity & Secondary Aerosols</strong>
+                <strong style={{ color: "var(--text-primary)", fontSize: "13px" }}>3. High Relative Humidity & Secondary Aerosols</strong>
               </div>
               <p style={{ fontSize: "11px", color: "var(--text-secondary)", lineHeight: 1.55 }}>
                 Nighttime relative humidity (RH &gt; 80%) promotes aqueous chemical transformation of precursor gases (SO2, NO2, NH3) into secondary inorganic aerosols (ammonium sulfate and nitrate), swelling PM2.5 mass.
@@ -1018,6 +1018,7 @@ function SpatiotemporalTwinPage({ summary, stationFilter, setStationFilter }) {
 function ThreeCanvasScene({ stations, viewMode, metric, horizon, activeMonthIdx, cameraPreset }) {
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
+  const [sceneError, setSceneError] = useState("");
 
   useEffect(() => {
     const mount = mountRef.current;
@@ -1029,6 +1030,7 @@ function ThreeCanvasScene({ stations, viewMode, metric, horizon, activeMonthIdx,
     const start = () => {
       if (cancelled || !window.THREE) return;
       try {
+        setSceneError("");
         const engine = initThreeEngine(window.THREE, mount, stations, viewMode, metric, horizon, activeMonthIdx, cameraPreset);
         sceneRef.current = engine;
         cleanup = () => {
@@ -1037,6 +1039,7 @@ function ThreeCanvasScene({ stations, viewMode, metric, horizon, activeMonthIdx,
         };
       } catch (err) {
         console.error("Three.js engine failed to initialize:", err);
+        setSceneError("The 3D view could not be initialized. Try refreshing the page or using a browser with WebGL enabled.");
       }
     };
 
@@ -1064,7 +1067,17 @@ function ThreeCanvasScene({ stations, viewMode, metric, horizon, activeMonthIdx,
     }
   }, [cameraPreset]);
 
-  return <div ref={mountRef} style={{ width: "100%", height: "100%", position: "relative" }} />;
+  return (
+    <div ref={mountRef} style={{ width: "100%", height: "100%", position: "relative" }}>
+      {sceneError && (
+        <div className="three-error-state" role="alert">
+          <Icon name="alert-triangle" size={28} />
+          <strong>3D visualization unavailable</strong>
+          <span>{sceneError}</span>
+        </div>
+      )}
+    </div>
+  );
 }
 
 function initThreeEngine(THREE, mount, stations, viewMode, metric, horizon, activeMonthIdx, initialPreset) {
@@ -1083,8 +1096,8 @@ function initThreeEngine(THREE, mount, stations, viewMode, metric, horizon, acti
   mount.replaceChildren(renderer.domElement);
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color("#080f1d");
-  scene.fog = new THREE.FogExp2("#080f1d", 0.016);
+  scene.background = new THREE.Color("#f8fafc");
+  scene.fog = new THREE.FogExp2("#f8fafc", 0.016);
 
   const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 150);
 
@@ -1105,10 +1118,10 @@ function initThreeEngine(THREE, mount, stations, viewMode, metric, horizon, acti
   const maxGraphHeight = 5.2;
 
   // Lighting Rig
-  const ambientLight = new THREE.AmbientLight("#223348", 1.4);
+  const ambientLight = new THREE.AmbientLight("#ffffff", 1.8);
   scene.add(ambientLight);
 
-  const hemisphereLight = new THREE.HemisphereLight("#38bdf8", "#080f1d", 1.2);
+  const hemisphereLight = new THREE.HemisphereLight("#99f6e4", "#e2e8f0", 1.4);
   scene.add(hemisphereLight);
 
   const dirLight = new THREE.DirectionalLight("#f8fafc", 2.6);
@@ -1116,14 +1129,14 @@ function initThreeEngine(THREE, mount, stations, viewMode, metric, horizon, acti
   dirLight.castShadow = true;
   scene.add(dirLight);
 
-  const accentRim = new THREE.PointLight("#38bdf8", 3.0, 40);
+  const accentRim = new THREE.PointLight("#0f766e", 2.5, 40);
   accentRim.position.set(gridW, 10, -gridD);
   scene.add(accentRim);
 
   // Sleek Beveled Ground Pedestal
   const platformGeo = new THREE.BoxGeometry(gridW + 2.8, 0.25, gridD + 2.8);
   const platformMat = new THREE.MeshStandardMaterial({
-    color: "#0c1524",
+    color: "#ffffff",
     roughness: 0.65,
     metalness: 0.35,
   });
@@ -1134,13 +1147,13 @@ function initThreeEngine(THREE, mount, stations, viewMode, metric, horizon, acti
 
   // Neon Edge Border
   const edgeGeo = new THREE.EdgesGeometry(platformGeo);
-  const edgeMat = new THREE.LineBasicMaterial({ color: "#1e3a5f", transparent: true, opacity: 0.6 });
+  const edgeMat = new THREE.LineBasicMaterial({ color: "#94a3b8", transparent: true, opacity: 0.8 });
   const platformBorder = new THREE.LineSegments(edgeGeo, edgeMat);
   platformBorder.position.copy(platform.position);
   scene.add(platformBorder);
 
   // Coordinate Grid Plane
-  const gridHelper = new THREE.GridHelper(Math.max(gridW, gridD) + 2, Math.max(stationCount, monthCount), "#1e293b", "#0f172a");
+  const gridHelper = new THREE.GridHelper(Math.max(gridW, gridD) + 2, Math.max(stationCount, monthCount), "#cbd5e1", "#e2e8f0");
   gridHelper.position.set(0, 0.01, 0);
   scene.add(gridHelper);
 
@@ -1148,7 +1161,7 @@ function initThreeEngine(THREE, mount, stations, viewMode, metric, horizon, acti
   for (let tick = 1; tick <= 3; tick++) {
     const tickH = (maxGraphHeight / 3) * tick;
     const ringGeo = new THREE.RingGeometry(0.12, 0.16, 16);
-    const ringMat = new THREE.MeshBasicMaterial({ color: "#38bdf8", side: THREE.DoubleSide });
+    const ringMat = new THREE.MeshBasicMaterial({ color: "#0f766e", side: THREE.DoubleSide });
     const ring = new THREE.Mesh(ringGeo, ringMat);
     ring.rotation.x = Math.PI / 2;
     ring.position.set(baseX - 0.9, tickH, baseZ - 0.9);
@@ -1266,7 +1279,7 @@ function initThreeEngine(THREE, mount, stations, viewMode, metric, horizon, acti
 
   // Hover Highlight Beacon Box
   const beaconGeo = new THREE.BoxGeometry(0.72, 1, 0.54);
-  const beaconMat = new THREE.MeshBasicMaterial({ color: "#38bdf8", wireframe: true, transparent: true, opacity: 0.9 });
+  const beaconMat = new THREE.MeshBasicMaterial({ color: "#0f766e", wireframe: true, transparent: true, opacity: 0.9 });
   const beaconMesh = new THREE.Mesh(beaconGeo, beaconMat);
   beaconMesh.visible = false;
   scene.add(beaconMesh);
@@ -1274,7 +1287,7 @@ function initThreeEngine(THREE, mount, stations, viewMode, metric, horizon, acti
   // Time Scanner Blade Plane (glowing timeline crosshair)
   const bladeGeo = new THREE.PlaneGeometry(gridW + 1.2, maxGraphHeight + 0.8);
   const bladeMat = new THREE.MeshBasicMaterial({
-    color: "#38bdf8",
+    color: "#0f766e",
     transparent: true,
     opacity: 0.12,
     side: THREE.DoubleSide
