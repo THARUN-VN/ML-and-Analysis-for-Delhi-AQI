@@ -3,22 +3,22 @@
   --font-display: "Manrope", var(--font-sans);
   --font-mono: "JetBrains Mono", monospace;
 
-  /* Color Palette - Modern Environmental Obsidian & Cyan/Emerald */
-  --bg-app: #070d18;
-  --bg-surface: #0e1726;
-  --bg-card: #121d30;
-  --bg-card-hover: #17243c;
-  --bg-elevated: #1a2842;
-  --bg-input: #0b1422;
+  /* Color Palette - Clean light workspace with charcoal and teal accents */
+  --bg-app: #f4f6f8;
+  --bg-surface: #ffffff;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f0fdfa;
+  --bg-elevated: #eef2f4;
+  --bg-input: #f8fafc;
 
-  --border-subtle: rgba(255, 255, 255, 0.07);
-  --border-medium: rgba(255, 255, 255, 0.12);
-  --border-active: rgba(56, 189, 248, 0.35);
+  --border-subtle: #e2e8f0;
+  --border-medium: #cbd5e1;
+  --border-active: rgba(13, 148, 136, 0.45);
 
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
+  --text-primary: #17202a;
+  --text-secondary: #475569;
   --text-muted: #64748b;
-  --text-dim: #475569;
+  --text-dim: #94a3b8;
 
   /* Official CPCB AQI Scale */
   --aqi-good: #10b981;
@@ -29,20 +29,20 @@
   --aqi-severe: #be123c;
 
   /* Brand Accents */
-  --accent-cyan: #38bdf8;
-  --accent-emerald: #34d399;
-  --accent-violet: #a855f7;
-  --accent-amber: #fbbf24;
+  --accent-cyan: #0f766e;
+  --accent-emerald: #059669;
+  --accent-violet: #7c3aed;
+  --accent-amber: #d97706;
 
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 14px;
   --radius-xl: 18px;
 
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.55);
-  --shadow-glow: 0 0 20px rgba(56, 189, 248, 0.2);
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08);
+  --shadow-md: 0 6px 18px rgba(15, 23, 42, 0.09);
+  --shadow-lg: 0 14px 34px rgba(15, 23, 42, 0.12);
+  --shadow-glow: 0 0 20px rgba(13, 148, 136, 0.14);
 }
 
 * {
@@ -87,11 +87,11 @@ a {
   background: var(--bg-app);
 }
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
+  background: #cbd5e1;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: #94a3b8;
 }
 
 /* Application Layout Shell */
@@ -231,7 +231,7 @@ a {
 
 .dataset-badge-card {
   padding: 12px;
-  background: rgba(11, 20, 34, 0.6);
+  background: var(--bg-input);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
 }
@@ -294,7 +294,7 @@ a {
 .topbar {
   height: 64px;
   border-bottom: 1px solid var(--border-subtle);
-  background: rgba(14, 23, 38, 0.7);
+  background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(12px);
   position: sticky;
   top: 0;
@@ -797,7 +797,7 @@ a {
   position: relative;
   width: 100%;
   height: 540px;
-  background: #080f1d;
+  background: #f8fafc;
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   overflow: hidden;
@@ -816,6 +816,31 @@ a {
   cursor: grabbing;
 }
 
+.three-error-state {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px;
+  color: var(--text-secondary);
+  text-align: center;
+  background: radial-gradient(circle at center, rgba(13, 148, 136, 0.12), transparent 58%);
+}
+
+.three-error-state strong {
+  color: #f8fafc;
+  font-size: 15px;
+}
+
+.three-error-state span {
+  max-width: 420px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
 /* Floating 3D Overlays */
 .floating-camera-presets {
   position: absolute;
@@ -824,7 +849,7 @@ a {
   z-index: 10;
   display: flex;
   gap: 4px;
-  background: rgba(14, 23, 38, 0.85);
+  background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(8px);
   padding: 4px;
   border-radius: var(--radius-sm);
@@ -856,7 +881,7 @@ a {
   left: 14px;
   right: 14px;
   z-index: 10;
-  background: rgba(14, 23, 38, 0.88);
+  background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(12px);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
@@ -918,7 +943,7 @@ a {
 .hud-tooltip {
   position: absolute;
   z-index: 20;
-  background: rgba(11, 20, 34, 0.94);
+  background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(14px);
   border: 1px solid var(--border-active);
   border-radius: var(--radius-md);
@@ -1620,4 +1645,65 @@ a {
   .canvas-3d-wrapper { height: 420px; }
   .slider-group-grid { grid-template-columns: 1fr; }
   .topbar { padding: 0 16px; }
+}
+
+/* Light theme contrast refinements */
+.brand-title,
+.nav-button:hover,
+.nav-button.active,
+.btn-icon:hover,
+.page-title,
+.select-input,
+.segmented-btn:hover,
+.segmented-btn.active,
+.kpi-number,
+.section-headline,
+.station-cell,
+.modern-table tr:hover td {
+  color: var(--text-primary);
+}
+
+.topbar {
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.nav-button.active {
+  background: linear-gradient(90deg, rgba(13, 148, 136, 0.12), rgba(16, 185, 129, 0.06));
+}
+
+.dataset-badge-card {
+  background: var(--bg-input);
+}
+
+.alert-card {
+  color: #92400e;
+}
+
+.alert-card strong {
+  color: #78350f;
+}
+
+.kpi-icon-wrap,
+.rank-badge {
+  background: #f1f5f9;
+}
+
+.chart-grid-line {
+  stroke: rgba(15, 23, 42, 0.1);
+}
+
+.chart-dot {
+  fill: var(--accent-cyan);
+}
+
+.modern-table tr:hover td {
+  background: #f8fafc;
+}
+
+.floating-camera-presets,
+.twin-timeline-bar,
+.hud-tooltip {
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-md);
 }
