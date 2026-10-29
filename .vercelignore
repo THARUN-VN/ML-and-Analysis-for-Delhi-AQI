@@ -1,0 +1,7 @@
+.venv
+__pycache__
+**/__pycache__
+raw_data
+final_data
+models
+model_code.ipynb

@@ -1,0 +1,25 @@
+{
+  "functions": {
+    "api/**/*.py": {
+      "excludeFiles": "{raw_data/**,final_data/**,models/**,model_code.ipynb,*.png,Pollution_Visualizations/**,SHAP_Images/**,distributions_clean/**}"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/dashboard/index.html"
+    },
+    {
+      "source": "/app.jsx",
+      "destination": "/dashboard/app.jsx"
+    },
+    {
+      "source": "/styles.css",
+      "destination": "/dashboard/styles.css"
+    },
+    {
+      "source": "/assets/(.*)",
+      "destination": "/$1"
+    }
+  ]
+}

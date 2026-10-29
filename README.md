@@ -21,6 +21,10 @@ http://127.0.0.1:8000
 
 > **Instant Cold Start**: The platform includes a pre-warmed summary cache (`dashboard/summary_cache.json`). The server and UI initialize in **~30 milliseconds** rather than re-streaming the 295 MB CSV.
 
+## Deploy to Vercel
+
+Import this repository in Vercel with the project root set to the repository root and the framework preset set to **Other**. No build command or environment variables are required. Vercel serves the dashboard and visualization assets statically and runs the overview, model metadata, and prediction endpoints as Python serverless functions. The large source datasets and saved model files are excluded from deployment; the dashboard uses its included summary cache and prediction coefficients.
+
 ---
 
 ## 🏛️ Platform Architecture & Pages

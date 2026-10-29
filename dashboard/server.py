@@ -13,7 +13,7 @@ import time
 import webbrowser
 from collections import defaultdict
 from datetime import datetime
-from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from http.server import BaseHTTPRequestHandler, SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
 
@@ -410,6 +410,21 @@ def predict_pm25(params: dict, model_type: str = "LR") -> dict:
     }
 
 
+def models_metadata() -> dict:
+    return {
+        "benchmarks": MODEL_BENCHMARKS,
+        "features": MODEL_FEATURES,
+        "weights": {
+            "LR": LR_WEIGHTS,
+            "Ridge": RIDGE_WEIGHTS,
+        },
+        "researchFigures": RESEARCH_FIGURES,
+        "pollutionVisualizations": POLLUTION_VISUALIZATIONS,
+        "shapCatalog": SHAP_CATALOG,
+        "distributionCatalog": DISTRIBUTION_CATALOG,
+    }
+
+
 def load_summary() -> dict:
     global SUMMARY
     if SUMMARY is not None:
@@ -534,6 +549,21 @@ def load_summary() -> dict:
         return SUMMARY
 
 
+def write_json_response(handler: BaseHTTPRequestHandler, data: dict | list) -> None:
+    try:
+        body = json.dumps(data, separators=(",", ":")).encode("utf-8")
+    except Exception as error:
+        handler.send_error(500, str(error))
+        return
+    handler.send_response(200)
+    handler.send_header("Content-Type", "application/json; charset=utf-8")
+    handler.send_header("Access-Control-Allow-Origin", "*")
+    handler.send_header("Cache-Control", "no-store")
+    handler.send_header("Content-Length", str(len(body)))
+    handler.end_headers()
+    handler.wfile.write(body)
+
+
 class DashboardHandler(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=str(DASHBOARD_ROOT), **kwargs)
@@ -582,18 +612,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
         self.send_error(404, "Endpoint not found")
 
     def send_json(self, data: dict | list) -> None:
-        try:
-            body = json.dumps(data, separators=(",", ":")).encode("utf-8")
-        except Exception as error:
-            self.send_error(500, str(error))
-            return
-        self.send_response(200)
-        self.send_header("Content-Type", "application/json; charset=utf-8")
-        self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Cache-Control", "no-store")
-        self.send_header("Content-Length", str(len(body)))
-        self.end_headers()
-        self.wfile.write(body)
+        write_json_response(self, data)
 
     def send_summary(self) -> None:
         try:
@@ -602,19 +621,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             self.send_error(500, str(error))
 
     def send_models_metadata(self) -> None:
-        data = {
-            "benchmarks": MODEL_BENCHMARKS,
-            "features": MODEL_FEATURES,
-            "weights": {
-                "LR": LR_WEIGHTS,
-                "Ridge": RIDGE_WEIGHTS
-            },
-            "researchFigures": RESEARCH_FIGURES,
-            "pollutionVisualizations": POLLUTION_VISUALIZATIONS,
-            "shapCatalog": SHAP_CATALOG,
-            "distributionCatalog": DISTRIBUTION_CATALOG
-        }
-        self.send_json(data)
+        self.send_json(models_metadata())
 
     def serve_project_asset(self, relative_path: str) -> None:
         clean_relative = Path(relative_path)
