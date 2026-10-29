@@ -77,18 +77,23 @@ function App() {
 
   // Fetch initial data
   useEffect(() => {
-    Promise.all([
-      fetch("/api/overview").then((res) => {
-        if (!res.ok) throw new Error("Could not load summary data.");
-        return res.json();
-      }),
-      fetch("/api/models").then((res) => {
-        if (!res.ok) throw new Error("Could not load model metadata.");
+    // Fetch overview (required) and models (with graceful fallback)
+    fetch("/api/overview")
+      .then((res) => {
+        if (!res.ok) throw new Error("Could not load summary data. Is the server running?");
         return res.json();
       })
-    ])
-      .then(([summaryData, metaData]) => {
+      .then((summaryData) => {
         setSummary(summaryData);
+        // Now fetch models metadata; failure here is non-fatal
+        return fetch("/api/models")
+          .then((res) => {
+            if (!res.ok) throw new Error("models_fetch_failed");
+            return res.json();
+          })
+          .catch(() => null); // graceful fallback — null means we'll use defaults in each page
+      })
+      .then((metaData) => {
         setMetadata(metaData);
         setLoading(false);
       })
